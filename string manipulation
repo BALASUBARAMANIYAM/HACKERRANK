@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+long substrCount(int n, string s) {
+    vector<int> left(n, 1), right(n, 1);
+    long count = 0;
+
+    // Precompute left array: how many times the current character has repeated from left to right
+    for (int i = 1; i < n; i++) {
+        if (s[i] == s[i - 1]) {
+            left[i] = left[i - 1] + 1;
+        }
+    }
+
+    // Precompute right array: how many times the current character has repeated from right to left
+    for (int i = n - 2; i >= 0; i--) {
+        if (s[i] == s[i + 1]) {
+            right[i] = right[i + 1] + 1;
+        }
+    }
+
+    // Main loop to count special substrings
+    for (int i = 0; i < n; i++) {
+        // Case 1: Add substrings where all characters are the same
+        if (i > 0 && s[i] == s[i - 1]) {
+            count += left[i] - 1; // Add repeated character substrings
+        }
+
+        // Case 2: Handle substrings with a different middle character
+        if (i > 0 && i < n - 1 && s[i - 1] == s[i + 1] && s[i] != s[i - 1]) {
+            count += min(left[i - 1], right[i + 1]);
+        }
+    }
+
+    // Include all single-character substrings (each character is a palindrome)
+    count += n;
+
+    return count;
+}
